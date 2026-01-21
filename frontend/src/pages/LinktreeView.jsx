@@ -26,14 +26,14 @@ const formatIraqiPhone = (phone) => {
 };
 
 const PLATFORM_CONFIG = {
-  whatsapp: { icon: FaWhatsapp, label: 'WhatsApp', color: 'from-[#25D366] to-[#128C7E]', shadow: 'shadow-green-500/25', getUrl: (v) => `https://wa.me/${formatIraqiPhone(v)}` },
-  telegram: { icon: FaTelegramPlane, label: 'Telegram', color: 'from-[#0088cc] to-[#0066aa]', shadow: 'shadow-sky-500/25', getUrl: (v) => `https://t.me/${v.replace('@', '')}` },
+  whatsapp: { icon: FaWhatsapp, label: 'WhatsApp', color: 'from-[#25D366] to-[#128C7E]', shadow: 'shadow-green-500/25', getUrl: (v, msg) => msg ? `https://wa.me/${formatIraqiPhone(v)}?text=${encodeURIComponent(msg)}` : `https://wa.me/${formatIraqiPhone(v)}` },
+  telegram: { icon: FaTelegramPlane, label: 'Telegram', color: 'from-[#0088cc] to-[#0066aa]', shadow: 'shadow-sky-500/25', getUrl: (v, msg) => msg ? `https://t.me/${v.replace('@', '')}?text=${encodeURIComponent(msg)}` : `https://t.me/${v.replace('@', '')}` },
   viber: { icon: SiViber, label: 'Viber', color: 'from-[#7360F2] to-[#59267c]', shadow: 'shadow-purple-500/25', getUrl: (v) => `viber://chat?number=${formatIraqiPhone(v)}` },
   phone: { icon: FaPhone, label: 'Phone', color: 'from-[#007AFF] to-[#0055b3]', shadow: 'shadow-blue-500/25', getUrl: (v) => `tel:+${formatIraqiPhone(v)}`, iconClass: '-scale-x-100' },
-  instagram: { icon: FaInstagram, label: 'Instagram', color: 'from-[#E4405F] to-[#C13584]', shadow: 'shadow-pink-500/25', getUrl: (v) => `https://instagram.com/${v.replace('@', '')}` },
-  facebook: { icon: FaFacebook, label: 'Facebook', color: 'from-[#1877F2] to-[#0a5dc2]', shadow: 'shadow-blue-500/25', getUrl: (v) => v.includes('http') ? v : `https://facebook.com/${v}` },
-  snapchat: { icon: FaSnapchatGhost, label: 'Snapchat', color: 'from-[#FFFC00] to-[#d4d000]', shadow: 'shadow-yellow-500/25', textColor: 'text-black', getUrl: (v) => `https://snapchat.com/add/${v}` },
-  tiktok: { icon: FaTiktok, label: 'TikTok', color: 'from-[#000000] to-[#333333]', shadow: 'shadow-gray-500/25', getUrl: (v) => `https://tiktok.com/@${v.replace('@', '')}` },
+  instagram: { icon: FaInstagram, label: 'Instagram', color: 'from-[#E4405F] to-[#C13584]', shadow: 'shadow-pink-500/25', getUrl: (v) => v.includes('http://') || v.includes('https://') ? v : `https://instagram.com/${v.replace('@', '')}` },
+  facebook: { icon: FaFacebook, label: 'Facebook', color: 'from-[#1877F2] to-[#0a5dc2]', shadow: 'shadow-blue-500/25', getUrl: (v) => v.includes('http://') || v.includes('https://') ? v : `https://facebook.com/${v}` },
+  snapchat: { icon: FaSnapchatGhost, label: 'Snapchat', color: 'from-[#FFFC00] to-[#d4d000]', shadow: 'shadow-yellow-500/25', textColor: 'text-black', getUrl: (v) => v.includes('http://') || v.includes('https://') ? v : `https://snapchat.com/add/${v}` },
+  tiktok: { icon: FaTiktok, label: 'TikTok', color: 'from-[#000000] to-[#333333]', shadow: 'shadow-gray-500/25', getUrl: (v) => v.includes('http://') || v.includes('https://') ? v : `https://tiktok.com/@${v.replace('@', '')}` },
   website: { icon: FaGlobe, label: 'Website', color: 'from-[#6366f1] to-[#4f46e5]', shadow: 'shadow-indigo-500/25', getUrl: (v) => v.includes('http') ? v : `https://${v}` },
   discord: { icon: FaDiscord, label: 'Discord', color: 'from-[#5865F2] to-[#4752c4]', shadow: 'shadow-indigo-500/25', getUrl: (v) => v.includes('http') ? v : `https://discord.gg/${v}` },
 };
@@ -138,7 +138,7 @@ function LinktreeView() {
       // Track the click
       trackClick(platform.type);
       
-      const url = config.getUrl(platform.value);
+      const url = config.getUrl(platform.value, platform.message);
       if (platform.type === 'phone') {
         window.location.href = url;
       } else {

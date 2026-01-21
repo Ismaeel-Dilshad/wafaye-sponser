@@ -9,6 +9,10 @@ const platformSchema = new mongoose.Schema({
     value: {
         type: String,
         required: true
+    },
+    message: {
+        type: String,
+        default: '' // Optional message for WhatsApp and Telegram
     }
 }, { _id: false });
 

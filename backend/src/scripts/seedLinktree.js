@@ -37,8 +37,8 @@ const seedLinktree = async () => {
             sponsorPhone: '07506553031',
             expiresAt: expiresAt,
             platforms: [
-                { type: 'whatsapp', value: '07506553031' },
-                { type: 'telegram', value: 'waf_aye' },
+                { type: 'whatsapp', value: '07506553031', message: '' },
+                { type: 'telegram', value: 'waf_aye', message: '' },
                 { type: 'viber', value: '07506553031' },
                 { type: 'phone', value: '07506553031' }
             ]

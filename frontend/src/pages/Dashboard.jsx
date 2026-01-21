@@ -284,10 +284,10 @@ const PLATFORMS = [
   { id: 'telegram', label: 'Telegram', placeholder: 'ناوی بەکارهێنەر', icon: FaTelegramPlane, color: 'from-[#0088cc] to-[#0066aa]', bg: 'bg-[#0088cc]', text: 'text-white' },
   { id: 'viber', label: 'Viber', placeholder: 'ژمارەی مۆبایل', icon: SiViber, color: 'from-[#7360F2] to-[#59267c]', bg: 'bg-[#7360F2]', text: 'text-white' },
   { id: 'phone', label: 'Phone', placeholder: 'ژمارەی مۆبایل', icon: FaPhone, color: 'from-[#007AFF] to-[#0055b3]', bg: 'bg-[#007AFF]', text: 'text-white', iconClass: '-scale-x-100' },
-  { id: 'instagram', label: 'Instagram', placeholder: 'ناوی بەکارهێنەر', icon: FaInstagram, color: 'from-[#E4405F] to-[#C13584]', bg: 'bg-[#E4405F]', text: 'text-white' },
-  { id: 'facebook', label: 'Facebook', placeholder: 'ناوی بەکارهێنەر یان لینک', icon: FaFacebook, color: 'from-[#1877F2] to-[#0a5dc2]', bg: 'bg-[#1877F2]', text: 'text-white' },
-  { id: 'snapchat', label: 'Snapchat', placeholder: 'ناوی بەکارهێنەر', icon: FaSnapchatGhost, color: 'from-[#FFFC00] to-[#d4d000]', bg: 'bg-[#FFFC00]', text: 'text-black' },
-  { id: 'tiktok', label: 'TikTok', placeholder: 'ناوی بەکارهێنەر', icon: FaTiktok, color: 'from-[#000000] to-[#333333]', bg: 'bg-[#000000]', text: 'text-white' },
+  { id: 'instagram', label: 'Instagram', placeholder: 'لینک', icon: FaInstagram, color: 'from-[#E4405F] to-[#C13584]', bg: 'bg-[#E4405F]', text: 'text-white' },
+  { id: 'facebook', label: 'Facebook', placeholder: 'لینک', icon: FaFacebook, color: 'from-[#1877F2] to-[#0a5dc2]', bg: 'bg-[#1877F2]', text: 'text-white' },
+  { id: 'snapchat', label: 'Snapchat', placeholder: 'لینک', icon: FaSnapchatGhost, color: 'from-[#FFFC00] to-[#d4d000]', bg: 'bg-[#FFFC00]', text: 'text-black' },
+  { id: 'tiktok', label: 'TikTok', placeholder: 'لینک', icon: FaTiktok, color: 'from-[#000000] to-[#333333]', bg: 'bg-[#000000]', text: 'text-white' },
   { id: 'website', label: 'Website', placeholder: 'لینک', icon: FaGlobe, color: 'from-[#6366f1] to-[#4f46e5]', bg: 'bg-[#6366f1]', text: 'text-white' },
   { id: 'discord', label: 'Discord', placeholder: 'لینکی بانگهێشت', icon: FaDiscord, color: 'from-[#5865F2] to-[#4752c4]', bg: 'bg-[#5865F2]', text: 'text-white' },
 ];
@@ -356,6 +356,9 @@ function Dashboard() {
 
   const [selectedPlatforms, setSelectedPlatforms] = useState([]);
   const [platformValues, setPlatformValues] = useState({}); // { platformId: ['value1', 'value2', ...] }
+  const [platformMessages, setPlatformMessages] = useState({}); // { platformId: { index: 'message' } }
+  
+  const DEFAULT_MESSAGE = '';
 
   const token = localStorage.getItem('token');
 
@@ -587,10 +590,21 @@ function Dashboard() {
       const newValues = { ...platformValues };
       delete newValues[platformId];
       setPlatformValues(newValues);
+      // Remove messages for this platform
+      const newMessages = { ...platformMessages };
+      delete newMessages[platformId];
+      setPlatformMessages(newMessages);
     } else {
       setSelectedPlatforms([...selectedPlatforms, platformId]);
       // Initialize with one empty value
       setPlatformValues({ ...platformValues, [platformId]: [''] });
+      // Initialize with default message for WhatsApp and Telegram
+      if (platformId === 'whatsapp' || platformId === 'telegram') {
+        setPlatformMessages({ 
+          ...platformMessages, 
+          [platformId]: { 0: DEFAULT_MESSAGE } 
+        });
+      }
     }
   };
 
@@ -601,9 +615,26 @@ function Dashboard() {
     setPlatformValues({ ...platformValues, [platformId]: newValues });
   };
 
+  const handlePlatformMessage = (platformId, index, message) => {
+    const currentMessages = platformMessages[platformId] || {};
+    setPlatformMessages({ 
+      ...platformMessages, 
+      [platformId]: { ...currentMessages, [index]: message } 
+    });
+  };
+
   const addPlatformInstance = (platformId) => {
     const currentValues = platformValues[platformId] || [''];
+    const newIndex = currentValues.length;
     setPlatformValues({ ...platformValues, [platformId]: [...currentValues, ''] });
+    // Add default message for new WhatsApp/Telegram instance
+    if (platformId === 'whatsapp' || platformId === 'telegram') {
+      const currentMessages = platformMessages[platformId] || {};
+      setPlatformMessages({ 
+        ...platformMessages, 
+        [platformId]: { ...currentMessages, [newIndex]: DEFAULT_MESSAGE } 
+      });
+    }
   };
 
   const removePlatformInstance = (platformId, index) => {
@@ -614,10 +645,29 @@ function Dashboard() {
       const newValues = { ...platformValues };
       delete newValues[platformId];
       setPlatformValues(newValues);
+      // Remove messages
+      const newMessages = { ...platformMessages };
+      delete newMessages[platformId];
+      setPlatformMessages(newMessages);
     } else {
       // Remove specific instance
       const newValues = currentValues.filter((_, i) => i !== index);
       setPlatformValues({ ...platformValues, [platformId]: newValues });
+      // Remove message for this instance
+      const currentMessages = platformMessages[platformId] || {};
+      const newMessages = { ...currentMessages };
+      delete newMessages[index];
+      // Reindex remaining messages
+      const reindexed = {};
+      Object.keys(newMessages).forEach(key => {
+        const keyNum = parseInt(key);
+        if (keyNum > index) {
+          reindexed[keyNum - 1] = newMessages[key];
+        } else if (keyNum < index) {
+          reindexed[keyNum] = newMessages[key];
+        }
+      });
+      setPlatformMessages({ ...platformMessages, [platformId]: reindexed });
     }
   };
 
@@ -628,9 +678,15 @@ function Dashboard() {
     const platforms = [];
     selectedPlatforms.forEach(pId => {
       const values = platformValues[pId] || [];
-      values.forEach(value => {
+      const messages = platformMessages[pId] || {};
+      values.forEach((value, index) => {
         if (value && value.trim()) {
-          platforms.push({ type: pId, value: value.trim() });
+          const platformData = { type: pId, value: value.trim() };
+          // Add message for WhatsApp and Telegram if it exists
+          if ((pId === 'whatsapp' || pId === 'telegram') && messages[index]) {
+            platformData.message = messages[index];
+          }
+          platforms.push(platformData);
         }
       });
     });
@@ -721,6 +777,7 @@ function Dashboard() {
     });
     setSelectedPlatforms([]);
     setPlatformValues({});
+    setPlatformMessages({});
     setStep(1);
   }, []);
 
@@ -760,10 +817,25 @@ function Dashboard() {
 
     // Group platform values by type
     const values = {};
+    const messages = {};
     platformIds.forEach(pId => {
-      values[pId] = platforms.filter(p => p.type === pId).map(p => p.value);
+      const platformInstances = platforms.filter(p => p.type === pId);
+      values[pId] = platformInstances.map(p => p.value);
+      // Extract messages for WhatsApp and Telegram
+      if (pId === 'whatsapp' || pId === 'telegram') {
+        const messageMap = {};
+        platformInstances.forEach((p, idx) => {
+          if (p.message) {
+            messageMap[idx] = p.message;
+          } else {
+            messageMap[idx] = DEFAULT_MESSAGE; // Default if missing
+          }
+        });
+        messages[pId] = messageMap;
+      }
     });
     setPlatformValues(values);
+    setPlatformMessages(messages);
 
     setStep(1);
     setShowModal(true);
@@ -1308,22 +1380,34 @@ function Dashboard() {
                           {/* Input instances */}
                           <div className="space-y-2">
                             {values.map((value, index) => (
-                              <div key={index} className="flex items-center gap-2">
-                                <input
-                                  type="text"
-                                  value={value}
-                                  onChange={(e) => handlePlatformValue(pId, index, e.target.value)}
-                                  className="flex-1 px-4 py-2.5 bg-white border border-slate-200/80 rounded-xl focus:border-[#007AFF] focus:ring-4 focus:ring-[#007AFF]/10 outline-none transition-all placeholder:text-slate-300 text-sm"
-                                  placeholder={platform.placeholder}
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => removePlatformInstance(pId, index)}
-                                  className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 flex items-center justify-center transition-colors flex-shrink-0"
-                                  title="Remove"
-                                >
-                                  <X className="w-4 h-4" />
-                                </button>
+                              <div key={index} className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="text"
+                                    value={value}
+                                    onChange={(e) => handlePlatformValue(pId, index, e.target.value)}
+                                    className="flex-1 px-4 py-2.5 bg-white border border-slate-200/80 rounded-xl focus:border-[#007AFF] focus:ring-4 focus:ring-[#007AFF]/10 outline-none transition-all placeholder:text-slate-300 text-sm"
+                                    placeholder={platform.placeholder}
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => removePlatformInstance(pId, index)}
+                                    className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 flex items-center justify-center transition-colors flex-shrink-0"
+                                    title="Remove"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                </div>
+                                {/* Message input for WhatsApp and Telegram */}
+                                {(pId === 'whatsapp' || pId === 'telegram') && (
+                                  <input
+                                    type="text"
+                                    value={platformMessages[pId]?.[index] || DEFAULT_MESSAGE}
+                                    onChange={(e) => handlePlatformMessage(pId, index, e.target.value)}
+                                    className="w-full px-4 py-2.5 bg-slate-50/80 border border-slate-200/80 rounded-xl focus:border-[#007AFF] focus:ring-4 focus:ring-[#007AFF]/10 outline-none transition-all placeholder:text-slate-300 text-sm"
+                                    placeholder="پەیام (ئارەزوومەندانە)"
+                                  />
+                                )}
                               </div>
                             ))}
                           </div>

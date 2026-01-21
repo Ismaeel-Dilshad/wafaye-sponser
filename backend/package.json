@@ -10,7 +10,8 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "seed": "node src/scripts/seedAdmin.js",
-    "seed:linktree": "node src/scripts/seedLinktree.js"
+    "seed:linktree": "node src/scripts/seedLinktree.js",
+    "migrate:messages": "node src/scripts/migrateMessages.js"
   },
   "keywords": [],
   "type": "module",
