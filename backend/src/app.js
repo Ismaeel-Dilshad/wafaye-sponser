@@ -20,6 +20,11 @@ const app = express();
 // Middleware
 app.use(express.json());
 
+// Production: Serve frontend static files (only if not in Vercel)
+if (ENV.NODE_ENV === "production" && process.env.VERCEL !== '1') {
+    app.use(express.static(path.join(__dirname, '../../frontend', 'dist')));
+}
+
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/linktree', linktreeRoutes);
@@ -31,16 +36,10 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Server is running' });
 });
 
-// Production: Serve frontend static files
-if (ENV.NODE_ENV === "production") {
-    const frontendDist = path.join(__dirname, '../../frontend/dist');
-
-    // Serve static files
-    app.use(express.static(frontendDist));
-
-    // Catch-all route for SPA - send index.html for any non-API route
+// Production: Catch-all route for SPA (only if not in Vercel - Vercel handles this)
+if (ENV.NODE_ENV === "production" && process.env.VERCEL !== '1') {
     app.get('*', (req, res) => {
-        res.sendFile(path.join(frontendDist, 'index.html'));
+        res.sendFile(path.join(__dirname, '../../frontend', 'dist', 'index.html'));
     });
 }
 

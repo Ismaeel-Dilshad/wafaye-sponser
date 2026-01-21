@@ -2,15 +2,13 @@ import app from './app.js';
 import { connectDB } from './lib/db.js';
 import { ENV } from './lib/env.js';
 
-const PORT = ENV.PORT || 3000;
-
-// Connect to database and start server
-connectDB().then(() => {
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-        console.log(`Environment: ${ENV.NODE_ENV}`);
+// Only start server if not in serverless environment (Vercel)
+if (process.env.VERCEL !== '1') {
+    app.listen(ENV.PORT || 3000, () => {
+        console.log(`Server is running on port ${ENV.PORT || 3000}`);
+        connectDB();
     });
-}).catch((error) => {
-    console.error('Failed to connect to database:', error);
-    process.exit(1);
-});
+} else {
+    // In Vercel, connect DB on first request
+    connectDB();
+}

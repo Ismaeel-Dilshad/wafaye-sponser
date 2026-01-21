@@ -6,7 +6,10 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const uploadsDir = path.join(__dirname, '../../../frontend/dist/uploads');
+// Check if running on Vercel (read-only filesystem)
+const isVercel = process.env.VERCEL === '1';
+
+const uploadsDir = path.join(__dirname, '../../../frontend/public/uploads');
 
 /**
  * Delete an image file from the uploads directory
@@ -14,6 +17,11 @@ const uploadsDir = path.join(__dirname, '../../../frontend/dist/uploads');
  * @returns {boolean} - Whether the deletion was successful
  */
 export const deleteImage = (imageUrl) => {
+    // Skip on Vercel - filesystem is read-only
+    if (isVercel) {
+        return false;
+    }
+
     if (!imageUrl || !imageUrl.startsWith('/uploads/')) {
         return false;
     }
