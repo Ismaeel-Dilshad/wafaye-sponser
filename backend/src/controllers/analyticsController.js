@@ -34,7 +34,9 @@ export const trackView = async (req, res) => {
 
         // Send TikTok ViewContent event (non-blocking)
         const url = req.body.url || req.headers.referer || '';
+        const eventId = req.body.event_id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         trackViewContent(id, linktree.title, url, {
+            event_id: eventId,
             ip,
             user_agent: userAgent,
             external_id: ip,
@@ -78,7 +80,9 @@ export const trackClick = async (req, res) => {
 
         // Send TikTok ClickButton event (non-blocking)
         const url = req.body.url || req.headers.referer || '';
+        const eventId = req.body.event_id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         trackClickButton(id, platform, url, {
+            event_id: eventId,
             ip,
             user_agent: userAgent,
             external_id: ip,

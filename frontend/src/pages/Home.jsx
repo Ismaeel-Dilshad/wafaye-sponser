@@ -5,6 +5,11 @@ import { Loader2 } from 'lucide-react';
 
 const DEFAULT_AVATAR = '/images/DefaultAvatar.png';
 
+// Generate unique event_id for TikTok events
+const generateEventId = () => {
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+};
+
 // Format Iraqi phone numbers to international format
 const formatIraqiPhone = (phone) => {
   let digits = phone.replace(/\D/g, '');
@@ -60,7 +65,27 @@ function Home() {
 
     const trackView = async () => {
       try {
-        await fetch('/api/analytics/view/root', { method: 'POST' });
+        const eventId = generateEventId();
+        const url = window.location.href;
+        
+        // Track via Pixel SDK (if available)
+        if (window.ttq) {
+          window.ttq.track('ViewContent', {
+            event_id: eventId,
+            content_id: 'root',
+            content_name: data.title,
+            content_type: 'product',
+            value: 0,
+            currency: 'USD'
+          });
+        }
+        
+        // Track via Event API
+        await fetch('/api/analytics/view/root', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ event_id: eventId, url })
+        });
       } catch {
         // Silent fail for analytics
       }
@@ -71,10 +96,26 @@ function Home() {
 
   const trackClick = async (platformType) => {
     try {
+      const eventId = generateEventId();
+      const url = window.location.href;
+      
+      // Track via Pixel SDK (if available)
+      if (window.ttq) {
+        window.ttq.track('ClickButton', {
+          event_id: eventId,
+          content_id: 'root',
+          content_name: `${platformType} button`,
+          content_type: 'product',
+          value: 0,
+          currency: 'USD'
+        });
+      }
+      
+      // Track via Event API
       await fetch('/api/analytics/click/root', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ platform: platformType })
+        body: JSON.stringify({ platform: platformType, event_id: eventId, url })
       });
     } catch {
       // Silent fail for analytics

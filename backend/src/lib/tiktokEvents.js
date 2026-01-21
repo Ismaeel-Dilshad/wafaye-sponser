@@ -23,7 +23,7 @@ export const sendTikTokEvent = async (eventName, eventData, userData) => {
                 {
                     event: eventName,
                     event_time: Math.floor(Date.now() / 1000),
-                    event_id: eventData.event_id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                    event_id: userData.event_id || eventData.event_id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                     user: {
                         ip: userData.ip || '',
                         user_agent: userData.user_agent || '',
@@ -76,6 +76,7 @@ export const trackViewContent = async (linktreeId, linktreeTitle, url, userData)
         content_type: 'product',
         content_name: linktreeTitle,
         url,
+        event_id: userData.event_id, // Pass event_id from userData to eventData
     }, userData);
 };
 
@@ -88,5 +89,6 @@ export const trackClickButton = async (linktreeId, platform, url, userData) => {
         content_type: 'product',
         content_name: `${platform} button`,
         url,
+        event_id: userData.event_id, // Pass event_id from userData to eventData
     }, userData);
 };
