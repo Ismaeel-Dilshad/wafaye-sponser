@@ -1,6 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 
+// Check if running on Vercel (read-only filesystem)
+const isVercel = process.env.VERCEL === '1';
+
 const uploadsDir = path.join(process.cwd(), '../frontend/public/uploads');
 
 /**
@@ -9,6 +12,11 @@ const uploadsDir = path.join(process.cwd(), '../frontend/public/uploads');
  * @returns {boolean} - Whether the deletion was successful
  */
 export const deleteImage = (imageUrl) => {
+    // Skip on Vercel - filesystem is read-only
+    if (isVercel) {
+        return false;
+    }
+
     if (!imageUrl || !imageUrl.startsWith('/uploads/')) {
         return false;
     }
