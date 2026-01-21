@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Copy, ExternalLink, Trash2, Check, LogOut, Plus, RefreshCw, Eye, X, Users, MousePointer, TrendingUp, AlertTriangle, BarChart3, Link2, Loader2, Upload, Calendar, ChevronRight, ChevronLeft, User, Lock, KeyRound, Pencil } from 'lucide-react';
-import { FaWhatsapp, FaPhone, FaTelegramPlane, FaInstagram, FaFacebook, FaSnapchat, FaTiktok, FaGlobe, FaDiscord } from 'react-icons/fa';
+import { FaWhatsapp, FaPhone, FaTelegramPlane, FaInstagram, FaFacebook, FaSnapchatGhost, FaTiktok, FaGlobe, FaDiscord } from 'react-icons/fa';
 import { SiViber } from 'react-icons/si';
 
 // Custom Date Picker Component
@@ -286,7 +286,7 @@ const PLATFORMS = [
   { id: 'phone', label: 'Phone', placeholder: 'ژمارەی مۆبایل', icon: FaPhone, color: 'from-[#007AFF] to-[#0055b3]', bg: 'bg-[#007AFF]', text: 'text-white', iconClass: '-scale-x-100' },
   { id: 'instagram', label: 'Instagram', placeholder: 'ناوی بەکارهێنەر', icon: FaInstagram, color: 'from-[#E4405F] to-[#C13584]', bg: 'bg-[#E4405F]', text: 'text-white' },
   { id: 'facebook', label: 'Facebook', placeholder: 'ناوی بەکارهێنەر یان لینک', icon: FaFacebook, color: 'from-[#1877F2] to-[#0a5dc2]', bg: 'bg-[#1877F2]', text: 'text-white' },
-  { id: 'snapchat', label: 'Snapchat', placeholder: 'ناوی بەکارهێنەر', icon: FaSnapchat, color: 'from-[#FFFC00] to-[#d4d000]', bg: 'bg-[#FFFC00]', text: 'text-black' },
+  { id: 'snapchat', label: 'Snapchat', placeholder: 'ناوی بەکارهێنەر', icon: FaSnapchatGhost, color: 'from-[#FFFC00] to-[#d4d000]', bg: 'bg-[#FFFC00]', text: 'text-black' },
   { id: 'tiktok', label: 'TikTok', placeholder: 'ناوی بەکارهێنەر', icon: FaTiktok, color: 'from-[#000000] to-[#333333]', bg: 'bg-[#000000]', text: 'text-white' },
   { id: 'website', label: 'Website', placeholder: 'لینک', icon: FaGlobe, color: 'from-[#6366f1] to-[#4f46e5]', bg: 'bg-[#6366f1]', text: 'text-white' },
   { id: 'discord', label: 'Discord', placeholder: 'لینکی بانگهێشت', icon: FaDiscord, color: 'from-[#5865F2] to-[#4752c4]', bg: 'bg-[#5865F2]', text: 'text-white' },

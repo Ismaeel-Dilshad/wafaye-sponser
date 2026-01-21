@@ -7,6 +7,8 @@ export const ENV = {
     NODE_ENV: process.env.NODE_ENV || 'development',
     MONGO_URI: process.env.MONGO_URI,
     JWT_SECRET: process.env.JWT_SECRET,
-    // TODO: Add other environment variables as needed
+    // TikTok Events API
+    TIKTOK_ACCESS_TOKEN: process.env.TIKTOK_ACCESS_TOKEN,
+    TIKTOK_PIXEL_ID: process.env.TIKTOK_PIXEL_ID,
 };
 

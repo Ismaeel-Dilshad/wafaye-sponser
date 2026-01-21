@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
-import { FaWhatsapp, FaPhone, FaTelegramPlane, FaInstagram, FaFacebook, FaSnapchat, FaTiktok, FaGlobe, FaDiscord } from 'react-icons/fa';
+import { FaWhatsapp, FaPhone, FaTelegramPlane, FaInstagram, FaFacebook, FaSnapchatGhost, FaTiktok, FaGlobe, FaDiscord } from 'react-icons/fa';
 import { SiViber } from 'react-icons/si';
 import { Loader2, AlertCircle } from 'lucide-react';
 
@@ -27,7 +27,7 @@ const PLATFORM_CONFIG = {
   phone: { icon: FaPhone, label: 'Phone', color: 'from-[#007AFF] to-[#0055b3]', shadow: 'shadow-blue-500/25', getUrl: (v) => `tel:+${formatIraqiPhone(v)}`, iconClass: '-scale-x-100' },
   instagram: { icon: FaInstagram, label: 'Instagram', color: 'from-[#E4405F] to-[#C13584]', shadow: 'shadow-pink-500/25', getUrl: (v) => `https://instagram.com/${v.replace('@', '')}` },
   facebook: { icon: FaFacebook, label: 'Facebook', color: 'from-[#1877F2] to-[#0a5dc2]', shadow: 'shadow-blue-500/25', getUrl: (v) => v.includes('http') ? v : `https://facebook.com/${v}` },
-  snapchat: { icon: FaSnapchat, label: 'Snapchat', color: 'from-[#FFFC00] to-[#d4d000]', shadow: 'shadow-yellow-500/25', textColor: 'text-black', getUrl: (v) => `https://snapchat.com/add/${v}` },
+  snapchat: { icon: FaSnapchatGhost, label: 'Snapchat', color: 'from-[#FFFC00] to-[#d4d000]', shadow: 'shadow-yellow-500/25', textColor: 'text-black', getUrl: (v) => `https://snapchat.com/add/${v}` },
   tiktok: { icon: FaTiktok, label: 'TikTok', color: 'from-[#000000] to-[#333333]', shadow: 'shadow-gray-500/25', getUrl: (v) => `https://tiktok.com/@${v.replace('@', '')}` },
   website: { icon: FaGlobe, label: 'Website', color: 'from-[#6366f1] to-[#4f46e5]', shadow: 'shadow-indigo-500/25', getUrl: (v) => v.includes('http') ? v : `https://${v}` },
   discord: { icon: FaDiscord, label: 'Discord', color: 'from-[#5865F2] to-[#4752c4]', shadow: 'shadow-indigo-500/25', getUrl: (v) => v.includes('http') ? v : `https://discord.gg/${v}` },

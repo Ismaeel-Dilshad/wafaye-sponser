@@ -1,5 +1,6 @@
 import Analytics from '../models/Analytics.js';
 import Linktree from '../models/Linktree.js';
+import { trackViewContent, trackClickButton } from '../lib/tiktokEvents.js';
 
 // Get client IP
 const getClientIp = (req) => {
@@ -14,7 +15,7 @@ const getClientIp = (req) => {
 export const trackView = async (req, res) => {
     try {
         const { id } = req.params;
-        
+
         // Check if linktree exists
         const linktree = await Linktree.findById(id);
         if (!linktree) {
@@ -22,6 +23,7 @@ export const trackView = async (req, res) => {
         }
 
         const ip = getClientIp(req);
+        const userAgent = req.headers['user-agent'] || '';
 
         // Create view record
         await Analytics.create({
@@ -29,6 +31,16 @@ export const trackView = async (req, res) => {
             type: 'view',
             ip
         });
+
+        // Send TikTok ViewContent event (non-blocking)
+        const url = req.body.url || req.headers.referer || '';
+        trackViewContent(id, linktree.title, url, {
+            ip,
+            user_agent: userAgent,
+            external_id: ip,
+            ttclid: req.body.ttclid || req.query.ttclid || '',
+            ttp: req.body.ttp || '',
+        }).catch(err => console.error('TikTok event error:', err));
 
         res.json({ success: true });
     } catch (error) {
@@ -54,6 +66,7 @@ export const trackClick = async (req, res) => {
         }
 
         const ip = getClientIp(req);
+        const userAgent = req.headers['user-agent'] || '';
 
         // Create click record
         await Analytics.create({
@@ -62,6 +75,16 @@ export const trackClick = async (req, res) => {
             platform,
             ip
         });
+
+        // Send TikTok ClickButton event (non-blocking)
+        const url = req.body.url || req.headers.referer || '';
+        trackClickButton(id, platform, url, {
+            ip,
+            user_agent: userAgent,
+            external_id: ip,
+            ttclid: req.body.ttclid || req.query.ttclid || '',
+            ttp: req.body.ttp || '',
+        }).catch(err => console.error('TikTok event error:', err));
 
         res.json({ success: true });
     } catch (error) {
