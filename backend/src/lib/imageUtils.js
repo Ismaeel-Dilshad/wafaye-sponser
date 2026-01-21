@@ -1,10 +1,12 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Check if running on Vercel (read-only filesystem)
-const isVercel = process.env.VERCEL === '1';
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const uploadsDir = path.join(process.cwd(), '../frontend/public/uploads');
+const uploadsDir = path.join(__dirname, '../../../frontend/dist/uploads');
 
 /**
  * Delete an image file from the uploads directory
@@ -12,11 +14,6 @@ const uploadsDir = path.join(process.cwd(), '../frontend/public/uploads');
  * @returns {boolean} - Whether the deletion was successful
  */
 export const deleteImage = (imageUrl) => {
-    // Skip on Vercel - filesystem is read-only
-    if (isVercel) {
-        return false;
-    }
-
     if (!imageUrl || !imageUrl.startsWith('/uploads/')) {
         return false;
     }

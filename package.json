@@ -1,14 +1,15 @@
 {
-  "name": "fullstack-app",
+  "name": "wafa-sponsor",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Linktree management platform",
+  "main": "backend/src/server.js",
   "engines": {
     "node": "20.x"
   },
   "scripts": {
+    "start": "node backend/src/server.js",
     "build": "npm install --prefix frontend && npm run build --prefix frontend",
-    "start": "npm run start --prefix backend"
+    "dev": "node backend/src/server.js"
   },
   "keywords": [],
   "author": "",
